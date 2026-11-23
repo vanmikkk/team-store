@@ -11,6 +11,7 @@ export function filterProducts(
     minPrice,
     maxPrice,
     sortBy = 'default',
+    inStock,
   } = filters;
 
   const normalizedQuery = searchQuery.trim().toLowerCase();
@@ -29,11 +30,15 @@ export function filterProducts(
     const matchesMaxPrice =
       maxPrice === undefined || product.price <= maxPrice;
 
+    const matchesAvailability =
+      inStock === undefined || product.inStock === inStock;
+
     return (
       matchesSearch &&
       matchesCategory &&
       matchesMinPrice &&
-      matchesMaxPrice
+      matchesMaxPrice &&
+      matchesAvailability
     );
   });
 
@@ -43,6 +48,16 @@ export function filterProducts(
 
   if (sortBy === 'price-desc') {
     return [...filteredProducts].sort((a, b) => b.price - a.price);
+  }
+
+  if (sortBy === 'rating-desc') {
+    return [...filteredProducts].sort((a, b) => b.rating - a.rating);
+  }
+
+  if (sortBy === 'name-asc') {
+    return [...filteredProducts].sort((a, b) =>
+      a.name.localeCompare(b.name),
+    );
   }
 
   return filteredProducts;

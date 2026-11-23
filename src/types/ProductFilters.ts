@@ -3,5 +3,6 @@ export interface ProductFilters {
   category?: string;
   minPrice?: number;
   maxPrice?: number;
-  sortBy?: 'default' | 'price-asc' | 'price-desc';
+  sortBy?: 'default' | 'price-asc' | 'price-desc' | 'rating-desc' | 'name-asc';
+  inStock?: boolean;
 }

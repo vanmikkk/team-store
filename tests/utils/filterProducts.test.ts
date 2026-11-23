@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Product } from '../../src/types/Product';
 import { filterProducts } from '../../src/utils/filterProducts';
+import { products as catalogProducts } from '../../src/data/products-test';
 
 describe('filterProducts', () => {
   const products: Product[] = [
@@ -128,5 +129,62 @@ describe('filterProducts', () => {
     });
 
     expect(products).toEqual(originalProducts);
+  });
+
+  it('should filter catalog products by category', () => {
+    const result = filterProducts(catalogProducts, {
+      searchQuery: '',
+      category: 'Fumo Plush',
+    });
+
+    expect(result).toHaveLength(5);
+  });
+
+  it('should find Reimu products in the catalog', () => {
+    const result = filterProducts(catalogProducts, {
+      searchQuery: 'reimu',
+    });
+
+    expect(result).toHaveLength(2);
+  });
+
+  it('should sort products by rating in descending order', () => {
+    const result = filterProducts(catalogProducts, {
+      searchQuery: '',
+      sortBy: 'rating-desc',
+    });
+
+    expect(result[0].rating).toBeGreaterThanOrEqual(
+      result[result.length - 1].rating,
+    );
+  });
+
+  it('should sort products by name in ascending order', () => {
+    const result = filterProducts(catalogProducts, {
+      searchQuery: '',
+      sortBy: 'name-asc',
+    });
+
+    expect(result[0].name.localeCompare(result[1].name)).toBeLessThanOrEqual(0);
+  });
+
+  it('should filter products by availability', () => {
+    const productsWithAvailability = [
+      ...catalogProducts,
+      {
+        ...catalogProducts[0],
+        id: '9',
+        name: 'Out of stock Reimu Fumo',
+        inStock: false,
+      },
+    ];
+
+    const result = filterProducts(productsWithAvailability, {
+      searchQuery: '',
+      inStock: true,
+    });
+
+    expect(result).toHaveLength(8);
+    expect(result.every((product) => product.inStock)).toBe(true);
   });
 });
