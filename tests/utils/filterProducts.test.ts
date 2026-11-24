@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Product } from '../../src/types/Product';
 import { filterProducts } from '../../src/utils/filterProducts';
-import { products as catalogProducts } from '../../src/data/products-test';
+import { products as catalogProducts } from '../../src/data/products';
 
 describe('filterProducts', () => {
   const products: Product[] = [
