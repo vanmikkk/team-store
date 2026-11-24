@@ -1,0 +1,86 @@
+
+.filter-panel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 20px;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 24px;
+  background: #ffffff;
+  border: 1px solid #eeeafd;
+  border-radius: 20px;
+  box-shadow: 0 6px 24px rgba(115, 91, 190, 0.08);
+}
+
+.filter-panel__search {
+  flex: 2 1 220px;
+}
+
+.filter-panel__group {
+  flex: 1 1 150px;
+}
+
+.filter-panel label {
+  display: block;
+  margin-bottom: 8px;
+  color: #625b7b;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.filter-panel input:not([type='checkbox']),
+.filter-panel select {
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 12px;
+  color: #39334f;
+  background: #faf9ff;
+  border: 1px solid #e7e1f7;
+  border-radius: 12px;
+  font: inherit;
+  outline: none;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.filter-panel input:focus,
+.filter-panel select:focus {
+  border-color: #9a87e8;
+  box-shadow: 0 0 0 3px rgba(154, 135, 232, 0.15);
+}
+
+.filter-panel__price {
+  display: flex;
+  gap: 8px;
+}
+
+.filter-panel__stock {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  margin-bottom: 0 !important;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.filter-panel__stock input {
+  width: 16px;
+  height: 16px;
+  accent-color: #8c79e8;
+}
+
+@media (max-width: 600px) {
+  .filter-panel {
+    gap: 16px;
+    padding: 18px;
+  }
+
+  .filter-panel__search,
+  .filter-panel__group {
+    flex: 1 1 100%;
+  }
+}
