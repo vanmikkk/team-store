@@ -39,3 +39,10 @@ export function removeFromCart(
 ): CartItem[] {
   return cart.filter((item) => item.id !== productId);
 }
+
+export function calculateCartTotal(cart: CartItem[]): number {
+  return cart.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0,
+  );
+}
