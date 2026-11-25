@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Product } from '../../src/types/Product';
-import { addToCart } from '../../src/utils/cart';
+import { addToCart, changeCartItemQuantity } from '../../src/utils/cart';
 
 function createProduct(overrides: Partial<Product> = {}): Product {
   return {
@@ -64,6 +64,45 @@ describe('addToCart', () => {
     const originalCart = cart.map((item) => ({ ...item }));
 
     addToCart(cart, product);
+
+    expect(cart).toEqual(originalCart);
+  });
+});
+
+describe('changeCartItemQuantity', () => {
+  it('should increase product quantity', () => {
+    const product = createProduct();
+    const cart = [{ ...product, quantity: 1 }];
+
+    const result = changeCartItemQuantity(cart, product.id, 1);
+
+    expect(result[0].quantity).toBe(2);
+  });
+
+  it('should decrease product quantity', () => {
+    const product = createProduct();
+    const cart = [{ ...product, quantity: 2 }];
+
+    const result = changeCartItemQuantity(cart, product.id, -1);
+
+    expect(result[0].quantity).toBe(1);
+  });
+
+  it('should not decrease quantity below 1', () => {
+    const product = createProduct();
+    const cart = [{ ...product, quantity: 1 }];
+
+    const result = changeCartItemQuantity(cart, product.id, -1);
+
+    expect(result[0].quantity).toBe(1);
+  });
+
+  it('should not mutate the original cart', () => {
+    const product = createProduct();
+    const cart = [{ ...product, quantity: 2 }];
+    const originalCart = cart.map((item) => ({ ...item }));
+
+    changeCartItemQuantity(cart, product.id, 1);
 
     expect(cart).toEqual(originalCart);
   });
