@@ -17,3 +17,18 @@ export function addToCart(
 
   return [...cart, { ...product, quantity: 1 }];
 }
+
+export function changeCartItemQuantity(
+  cart: CartItem[],
+  productId: string,
+  quantityChange: number,
+): CartItem[] {
+  return cart.map((item) =>
+    item.id === productId
+      ? {
+          ...item,
+          quantity: Math.max(1, item.quantity + quantityChange),
+        }
+      : item,
+  );
+}
