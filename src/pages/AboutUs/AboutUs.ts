@@ -2,7 +2,7 @@ import './AboutUs.css';
 
 export function renderAboutUs(): string {
   return `
-    <main class="about-us">
+    <section class="about-us">
       <section class="about-us__hero">
         <p class="about-us__eyebrow">ANIME & KAWAII GOODS</p>
 
@@ -65,6 +65,6 @@ export function renderAboutUs(): string {
           </article>
         </div>
       </section>
-    </main>
+    </section>
   `;
 }
