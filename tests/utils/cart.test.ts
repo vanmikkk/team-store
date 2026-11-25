@@ -5,6 +5,7 @@ import {
   changeCartItemQuantity,
   removeFromCart,
   calculateCartTotal,
+  calculateCartSummary,
 } from '../../src/utils/cart';
 
 
@@ -186,5 +187,60 @@ describe('calculateCartTotal', () => {
     calculateCartTotal(cart);
 
     expect(cart).toEqual(originalCart);
+  });
+});
+
+describe('calculateCartSummary', () => {
+  it('should apply 10% discount for SALE10 promo code', () => {
+    const product = createProduct({ price: 100 });
+    const cart = [{ ...product, quantity: 1 }];
+
+    const result = calculateCartSummary(cart, 'SALE10');
+
+    expect(result).toEqual({
+      subtotal: 100,
+      discount: 10,
+      total: 90,
+      promoCodeStatus: 'applied',
+    });
+  });
+
+  it('should not apply discount for an invalid promo code', () => {
+    const product = createProduct({ price: 100 });
+    const cart = [{ ...product, quantity: 1 }];
+
+    const result = calculateCartSummary(cart, 'UNKNOWN');
+
+    expect(result).toEqual({
+      subtotal: 100,
+      discount: 0,
+      total: 100,
+      promoCodeStatus: 'invalid',
+    });
+  });
+
+  it('should not accumulate discount when promo code is applied repeatedly', () => {
+    const product = createProduct({ price: 100 });
+    const cart = [{ ...product, quantity: 1 }];
+
+    const firstResult = calculateCartSummary(cart, 'SALE10');
+    const secondResult = calculateCartSummary(cart, 'SALE10');
+
+    expect(secondResult).toEqual(firstResult);
+    expect(secondResult.total).toBe(90);
+  });
+
+  it('should not apply discount when no promo code is provided', () => {
+    const product = createProduct({ price: 100 });
+    const cart = [{ ...product, quantity: 1 }];
+
+    const result = calculateCartSummary(cart, '');
+
+    expect(result).toEqual({
+      subtotal: 100,
+      discount: 0,
+      total: 100,
+      promoCodeStatus: 'empty',
+    });
   });
 });
