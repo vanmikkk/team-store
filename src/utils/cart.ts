@@ -46,3 +46,27 @@ export function calculateCartTotal(cart: CartItem[]): number {
     0,
   );
 }
+
+export function calculateCartSummary(
+  cart: CartItem[],
+  promoCode: string,
+) {
+  const subtotal = calculateCartTotal(cart);
+
+  const isPromoCodeValid = promoCode === 'SALE10';
+
+  const discount = isPromoCodeValid ? subtotal * 0.1 : 0;
+
+  const promoCodeStatus = promoCode === ''
+    ? 'empty'
+    : isPromoCodeValid
+      ? 'applied'
+      : 'invalid';
+
+  return {
+    subtotal,
+    discount,
+    total: subtotal - discount,
+    promoCodeStatus,
+  };
+}
