@@ -32,3 +32,10 @@ export function changeCartItemQuantity(
       : item,
   );
 }
+
+export function removeFromCart(
+  cart: CartItem[],
+  productId: string,
+): CartItem[] {
+  return cart.filter((item) => item.id !== productId);
+}
