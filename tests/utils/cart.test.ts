@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import type { Product } from '../../src/types/Product';
-import { addToCart, changeCartItemQuantity, removeFromCart, } from '../../src/utils/cart';
+import {
+  addToCart,
+  changeCartItemQuantity,
+  removeFromCart,
+  calculateCartTotal,
+} from '../../src/utils/cart';
+
 
 function createProduct(overrides: Partial<Product> = {}): Product {
   return {
@@ -142,6 +148,42 @@ describe('removeFromCart', () => {
     const originalCart = cart.map((item) => ({ ...item }));
 
     removeFromCart(cart, product.id);
+
+    expect(cart).toEqual(originalCart);
+  });
+});
+
+describe('calculateCartTotal', () => {
+  it('should calculate the total price of all cart items', () => {
+    const firstProduct = createProduct({ price: 35 });
+    const secondProduct = createProduct({
+      id: '2',
+      name: 'Marisa Kirisame Fumo',
+      price: 12,
+    });
+
+    const cart = [
+      { ...firstProduct, quantity: 2 },
+      { ...secondProduct, quantity: 3 },
+    ];
+
+    const result = calculateCartTotal(cart);
+
+    expect(result).toBe(106);
+  });
+
+  it('should return 0 for an empty cart', () => {
+    const result = calculateCartTotal([]);
+
+    expect(result).toBe(0);
+  });
+
+  it('should not mutate the original cart', () => {
+    const product = createProduct();
+    const cart = [{ ...product, quantity: 2 }];
+    const originalCart = cart.map((item) => ({ ...item }));
+
+    calculateCartTotal(cart);
 
     expect(cart).toEqual(originalCart);
   });
