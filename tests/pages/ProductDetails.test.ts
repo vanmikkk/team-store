@@ -1,6 +1,7 @@
 
 import { describe, expect, it } from 'vitest';
 import type { Product } from '../../src/types/Product';
+import { products } from '../../src/data/products';
 import { renderProductDetails } from '../../src/pages/ProductDetails/ProductDetails';
 
 function createProduct(overrides: Partial<Product> = {}): Product {
@@ -121,4 +122,20 @@ describe('renderProductDetails', () => {
     expect(document.querySelector('.product-details__back')?.getAttribute('href'))
       .toBe('#catalog');
   });
+
+  it('should show Add to Cart button when product is not in cart', () => {
+    const html = renderProductDetails(products[0], 0);
+
+    expect(html).toContain('data-action="add-to-cart"');
+    expect(html).not.toContain('data-action="increase"');
+    });
+
+    it('should show quantity controls when product is already in cart', () => {
+    const html = renderProductDetails(products[0], 2);
+
+    expect(html).toContain('data-action="decrease"');
+    expect(html).toContain('<span data-quantity>2</span>');
+    expect(html).toContain('data-action="increase"');
+    expect(html).not.toContain('data-action="add-to-cart"');
+    });
 });
