@@ -1,5 +1,6 @@
 
 import type { Product } from '../../types/Product';
+import './ProductDetails.css';
 
 function formatCurrency(amount: number): string {
   return `$${amount.toFixed(2)}`;
