@@ -150,6 +150,7 @@ export function renderCart(
 
 export interface CartController {
   addProduct(product: Product): void;
+  changeQuantity(productId: string, quantityChange: number): void;
   getItems(): CartItem[];
   destroy(): void;
 }
@@ -171,7 +172,7 @@ export function setupCart(
 
     onCartChange?.(cart.map((item) => ({ ...item })));
   };
-  
+
   const handleClick = (event: MouseEvent): void => {
     const target = event.target;
 
@@ -225,6 +226,12 @@ export function setupCart(
   return {
     addProduct(product: Product): void {
       cart = addToCart(cart, product);
+      render();
+      persistCart();
+    },
+
+    changeQuantity(productId: string, quantityChange: number): void {
+      cart = changeCartItemQuantity(cart, productId, quantityChange);
       render();
       persistCart();
     },
