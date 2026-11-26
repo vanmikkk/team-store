@@ -43,19 +43,44 @@ function renderRoute(): void {
   page.hidden = false;
 
   if (route === 'product') {
-    const productId = getProductIdFromHash(window.location.hash);
-    const product = products.find((item) => item.id === productId);
+  const productId = getProductIdFromHash(window.location.hash);
+  const product = products.find((item) => item.id === productId);
 
-    page.innerHTML = renderProductDetails(product);
+  const cartItem = product
+    ? cartController.getItems().find((item) => item.id === product.id)
+    : undefined;
 
-    if (product && product.inStock) {
-      const addToCartButton = page.querySelector<HTMLButtonElement>(
-        '[data-action="add-to-cart"]',
-      );
+  const quantity = cartItem?.quantity ?? 0;
 
-      addToCartButton?.addEventListener('click', () => {
-        cartController.addProduct(product);
-      });
+  page.innerHTML = renderProductDetails(product, quantity);
+
+  if (product) {
+    const addToCartButton = page.querySelector<HTMLButtonElement>(
+      '[data-action="add-to-cart"]',
+    );
+
+    addToCartButton?.addEventListener('click', () => {
+      cartController.addProduct(product);
+      renderRoute();
+    });
+
+    const increaseButton = page.querySelector<HTMLButtonElement>(
+      '[data-action="increase"]',
+    );
+
+    increaseButton?.addEventListener('click', () => {
+      cartController.changeQuantity(product.id, 1);
+      renderRoute();
+    });
+
+    const decreaseButton = page.querySelector<HTMLButtonElement>(
+      '[data-action="decrease"]',
+    );
+
+    decreaseButton?.addEventListener('click', () => {
+      cartController.changeQuantity(product.id, -1);
+      renderRoute();
+    });
     }
 
     return;
