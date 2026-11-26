@@ -1,5 +1,6 @@
 
 import type { CartItem } from '../../types/CartItem';
+import { loadCart, saveCart } from '../../utils/cartStorage';
 import type { Product } from '../../types/Product';
 import {
   addToCart,
@@ -155,20 +156,22 @@ export interface CartController {
 
 export function setupCart(
   container: HTMLElement,
-  initialCart: CartItem[] = [],
+  initialCart?: CartItem[],
   onCartChange?: (cart: CartItem[]) => void,
 ): CartController {
-  let cart = initialCart.map((item) => ({ ...item }));
+  let cart = (initialCart ?? loadCart()).map((item) => ({ ...item }));
   let promoCode = '';
 
   const render = (): void => {
     container.innerHTML = renderCart(cart, promoCode);
   };
 
-  const notifyCartChange = (): void => {
+  const persistCart = (): void => {
+    saveCart(cart);
+
     onCartChange?.(cart.map((item) => ({ ...item })));
   };
-
+  
   const handleClick = (event: MouseEvent): void => {
     const target = event.target;
 
@@ -212,7 +215,7 @@ export function setupCart(
     }
 
     render();
-    notifyCartChange();
+    persistCart();
   };
 
   container.addEventListener('click', handleClick);
@@ -223,7 +226,7 @@ export function setupCart(
     addProduct(product: Product): void {
       cart = addToCart(cart, product);
       render();
-      notifyCartChange();
+      persistCart();
     },
 
     getItems(): CartItem[] {
