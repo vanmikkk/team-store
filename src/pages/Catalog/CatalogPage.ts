@@ -76,4 +76,22 @@ export function setupCatalogPage(): void {
       updateCatalog();
     }
   });
+
+  page.addEventListener('click', (event: MouseEvent) => {
+    const target = event.target;
+
+    if (!(target instanceof Element)) return;
+
+    const button = target.closest<HTMLButtonElement>(
+      '.product-card__button[data-product-id]',
+    );
+
+    if (!button) return;
+
+    const productId = button.dataset.productId;
+
+    if (!productId) return;
+
+    window.location.hash = `#product/${encodeURIComponent(productId)}`;
+  });
 }
