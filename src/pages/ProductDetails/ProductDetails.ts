@@ -20,6 +20,7 @@ function escapeHtml(value: string): string {
 
 export function renderProductDetails(
   product: Product | undefined,
+  quantity = 0,
 ): string {
   if (!product) {
     return `
@@ -36,6 +37,39 @@ export function renderProductDetails(
       </section>
     `;
   }
+
+  const cartControls =
+    quantity > 0
+        ? `
+        <div class="product-details__quantity-controls">
+            <button
+            type="button"
+            data-action="decrease"
+            aria-label="Decrease quantity"
+            >
+            −
+            </button>
+
+            <span data-quantity>${quantity}</span>
+
+            <button
+            type="button"
+            data-action="increase"
+            aria-label="Increase quantity"
+            >
+            +
+            </button>
+        </div>
+        `
+        : `
+        <button
+            type="button"
+            data-action="add-to-cart"
+            ${!product.inStock ? 'disabled' : ''}
+        >
+            Add to Cart
+        </button>
+        `;
 
   return `
     <section class="product-details">
@@ -89,14 +123,7 @@ export function renderProductDetails(
               ${formatCurrency(product.price)}
             </span>
 
-            <button
-              class="product-details__button"
-              type="button"
-              data-action="add-to-cart"
-              ${product.inStock ? '' : 'disabled'}
-            >
-              Add to cart
-            </button>
+            ${cartControls}
           </div>
         </div>
       </div>
