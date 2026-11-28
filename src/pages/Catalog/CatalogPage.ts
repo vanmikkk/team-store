@@ -104,7 +104,10 @@ export function setupCatalogPage(
 
         cartController.addProduct(product);
 
-        addButton.textContent = 'Added to cart!';
+        addButton.textContent = 'Added to cart';
+        addButton.disabled = true;
+        addButton.classList.add('product-card__add-button--added');
+
         return;
       }
 
