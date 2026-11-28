@@ -1,4 +1,5 @@
-
+import { vi } from 'vitest';
+import type { CartController } from '../../src/components/Cart/Cart';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { products } from '../../src/data/products';
 import {
@@ -8,8 +9,15 @@ import {
 
 describe('CatalogPage', () => {
   beforeEach(() => {
+    const cartController = {
+      addProduct: vi.fn(),
+      changeQuantity: vi.fn(),
+      getItems: vi.fn(() => []),
+      destroy: vi.fn(),
+    } satisfies CartController;
+
     document.body.innerHTML = renderCatalogPage();
-    setupCatalogPage();
+    setupCatalogPage(cartController);
   });
 
   it('should render the filter panel and catalog', () => {
@@ -129,5 +137,34 @@ describe('CatalogPage', () => {
     expect(window.location.hash).toBe(
       `#product/${encodeURIComponent(productId!)}`,
     );
+  });
+
+  it('should add product to cart without navigating to details', () => {
+    window.location.hash = '';
+    const addProduct = vi.fn();
+
+    const cartController = {
+      addProduct,
+      changeQuantity: vi.fn(),
+      getItems: vi.fn(() => []),
+      destroy: vi.fn(),
+    } satisfies CartController;
+
+    document.body.innerHTML = renderCatalogPage();
+    setupCatalogPage(cartController);
+
+    const button = document.querySelector<HTMLButtonElement>(
+      '[data-action="add-to-cart"]',
+    );
+
+    expect(button).not.toBeNull();
+
+    const productId = button!.dataset.productId;
+    const product = products.find((item) => item.id === productId);
+
+    button!.click();
+
+    expect(addProduct).toHaveBeenCalledWith(product);
+    expect(window.location.hash).not.toContain('#product/');
   });
 });
