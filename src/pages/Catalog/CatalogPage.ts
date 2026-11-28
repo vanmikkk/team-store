@@ -1,9 +1,12 @@
-
+import type { CartController } from '../../components/Cart/Cart';
+import { products } from '../../data/products';
 import type { ProductFilters } from '../../types/ProductFilters';
 import { renderCatalog } from './Catalog';
 import { renderFilterPanel } from '../../components/FilterPanel/FilterPanel';
 
-export function renderCatalogPage(): string {
+export function renderCatalogPage(
+  cartController?: CartController,
+): string {
   const filters: ProductFilters = {
     searchQuery: '',
   };
@@ -12,13 +15,15 @@ export function renderCatalogPage(): string {
     <div class="catalog-page">
       ${renderFilterPanel(filters)}
       <div id="catalog-results">
-        ${renderCatalog(filters)}
+        ${renderCatalog(filters, cartController)}
       </div>
     </div>
   `;
 }
 
-export function setupCatalogPage(): void {
+export function setupCatalogPage(
+  cartController: CartController,
+): void {
   const page = document.querySelector<HTMLElement>('.catalog-page');
 
   if (!page) return;
@@ -32,7 +37,7 @@ export function setupCatalogPage(): void {
 
     if (!results) return;
 
-    results.innerHTML = renderCatalog(filters);
+    results.innerHTML = renderCatalog(filters, cartController);
   };
 
   page.addEventListener('input', (event: Event) => {
@@ -77,21 +82,45 @@ export function setupCatalogPage(): void {
     }
   });
 
-  page.addEventListener('click', (event: MouseEvent) => {
-    const target = event.target;
+    page.addEventListener('click', (event: MouseEvent) => {
+      const target = event.target;
 
-    if (!(target instanceof Element)) return;
+      if (!(target instanceof Element)) return;
 
-    const button = target.closest<HTMLButtonElement>(
-      '.product-card__button[data-product-id]',
-    );
+      const addButton = target.closest<HTMLButtonElement>(
+        '[data-action="add-to-cart"]',
+      );
 
-    if (!button) return;
+      if (addButton) {
+        const productId = addButton.dataset.productId;
 
-    const productId = button.dataset.productId;
+        if (!productId) return;
 
-    if (!productId) return;
+        const product = products.find(
+          (item) => item.id === productId,
+        );
 
-    window.location.hash = `#product/${encodeURIComponent(productId)}`;
-  });
+        if (!product || !product.inStock) return;
+
+        cartController.addProduct(product);
+
+        addButton.textContent = 'Added to cart';
+        addButton.disabled = true;
+        addButton.classList.add('product-card__add-button--added');
+
+        return;
+      }
+
+      const button = target.closest<HTMLButtonElement>(
+        '.product-card__button[data-product-id]',
+      );
+
+      if (!button) return;
+
+      const productId = button.dataset.productId;
+
+      if (!productId) return;
+
+      window.location.hash = `#product/${encodeURIComponent(productId)}`;
+    });
 }

@@ -1,7 +1,10 @@
 import './ProductCard.css';
 import type { Product } from '../../types/Product';
 
-export function createProductCard(product: Product): string {
+export function createProductCard(
+  product: Product,
+  isInCart = false,
+): string {
   return `
     <article class="product-card">
       <div class="product-card__image-wrapper">
@@ -32,13 +35,25 @@ export function createProductCard(product: Product): string {
             $${product.price.toFixed(2)}
           </span>
 
-          <button
-            class="product-card__button"
-            type="button"
-            data-product-id="${product.id}"
-          >
-            View details
-          </button>
+          <div class="product-card__actions">
+            <button
+              class="product-card__button"
+              type="button"
+              data-product-id="${product.id}"
+            >
+              View details
+            </button>
+
+            <button
+              class="product-card__add-button ${isInCart ? 'product-card__add-button--added' : ''}"
+              type="button"
+              data-action="add-to-cart"
+              data-product-id="${product.id}"
+              ${!product.inStock || isInCart ? 'disabled' : ''}
+            >
+              ${isInCart ? 'Added to cart ✓' : 'Add to cart'}
+            </button>
+          </div>
         </div>
       </div>
     </article>

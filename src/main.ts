@@ -87,8 +87,8 @@ function renderRoute(): void {
   }
 
   if (route === 'catalog') {
-    page.innerHTML = renderCatalogPage();
-    setupCatalogPage();
+    page.innerHTML = renderCatalogPage(cartController);
+    setupCatalogPage(cartController);
     return;
   }
 
