@@ -37,4 +37,8 @@ describe('renderCatalog', () => {
     expect(html).toContain('No products found');
     expect(html).not.toContain('catalog__grid');
   });
+
+  it('should navigate to product details when View details is clicked', () => {
+    // 
+  });
 });

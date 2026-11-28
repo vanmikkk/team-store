@@ -1,5 +1,6 @@
 
 import type { CartItem } from '../../types/CartItem';
+import { loadCart, saveCart } from '../../utils/cartStorage';
 import type { Product } from '../../types/Product';
 import {
   addToCart,
@@ -7,6 +8,7 @@ import {
   removeFromCart,
   calculateCartSummary,
 } from '../../utils/cart';
+import './Cart.css';
 
 function formatCurrency(amount: number): string {
   return `$${amount.toFixed(2)}`;
@@ -148,23 +150,26 @@ export function renderCart(
 
 export interface CartController {
   addProduct(product: Product): void;
+  changeQuantity(productId: string, quantityChange: number): void;
   getItems(): CartItem[];
   destroy(): void;
 }
 
 export function setupCart(
   container: HTMLElement,
-  initialCart: CartItem[] = [],
+  initialCart?: CartItem[],
   onCartChange?: (cart: CartItem[]) => void,
 ): CartController {
-  let cart = initialCart.map((item) => ({ ...item }));
+  let cart = (initialCart ?? loadCart()).map((item) => ({ ...item }));
   let promoCode = '';
 
   const render = (): void => {
     container.innerHTML = renderCart(cart, promoCode);
   };
 
-  const notifyCartChange = (): void => {
+  const persistCart = (): void => {
+    saveCart(cart);
+
     onCartChange?.(cart.map((item) => ({ ...item })));
   };
 
@@ -211,7 +216,7 @@ export function setupCart(
     }
 
     render();
-    notifyCartChange();
+    persistCart();
   };
 
   container.addEventListener('click', handleClick);
@@ -222,7 +227,13 @@ export function setupCart(
     addProduct(product: Product): void {
       cart = addToCart(cart, product);
       render();
-      notifyCartChange();
+      persistCart();
+    },
+
+    changeQuantity(productId: string, quantityChange: number): void {
+      cart = changeCartItemQuantity(cart, productId, quantityChange);
+      render();
+      persistCart();
     },
 
     getItems(): CartItem[] {

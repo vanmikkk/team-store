@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import type { CartItem } from '../../src/types/CartItem';
-import { renderCart } from '../../src/components/Cart/Cart';
+import {
+  renderCart,
+  setupCart,
+} from '../../src/components/Cart/Cart';
 
 function createCartItem(overrides: Partial<CartItem> = {}): CartItem {
   return {
@@ -68,5 +71,19 @@ describe('renderCart', () => {
       document.querySelector('[data-action="apply-promo"]'),
     ).not.toBeNull();
     expect(document.querySelector('[data-promo-status]')).not.toBeNull();
+  });
+});
+
+describe('CartController', () => {
+  it('should update product quantity through the controller', () => {
+    const container = document.createElement('div');
+    const controller = setupCart(container, [createCartItem({ quantity: 1 })]);
+
+    controller.changeQuantity('1', 1);
+
+    expect(controller.getItems()[0].quantity).toBe(2);
+    expect(container.querySelector('[data-quantity]')?.textContent).toBe('2');
+
+    controller.destroy();
   });
 });

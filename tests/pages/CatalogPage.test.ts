@@ -112,4 +112,22 @@ describe('CatalogPage', () => {
       expect(card.textContent).not.toContain('Out of stock');
     });
   });
+
+  it('should navigate to product details when View details is clicked', () => {
+    const button = document.querySelector<HTMLButtonElement>(
+      '.product-card__button',
+    );
+
+    expect(button).not.toBeNull();
+
+    const productId = button?.dataset.productId;
+
+    expect(productId).toBeTruthy();
+
+    button?.click();
+
+    expect(window.location.hash).toBe(
+      `#product/${encodeURIComponent(productId!)}`,
+    );
+  });
 });
